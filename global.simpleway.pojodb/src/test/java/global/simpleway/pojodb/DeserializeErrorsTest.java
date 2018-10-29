@@ -54,36 +54,35 @@ public class DeserializeErrorsTest {
 		pojo.setStringValue(stringValue);
 		return pojo;
 	}
-	
+
 	private void classNotExists(String id) throws IOException {
 		final Path filePath = repository.getPojoDB().getStoragePath().resolve("pojo").resolve(id + ".json");
 
 		final String wrongContent = Files.readAllLines(filePath).stream()
 				.map(l -> {
-					return l.replaceAll("\"class\":\"cz.sw.pojodb.Pojo\"", "\"class\":\"NonexistingClass\"");
+					return l.replaceAll("\"class\":\"" + Pojo.class.getName() + "\"", "\"class\":\"NonexistingClass\"");
 				})
 				.collect(Collectors.joining());
 
-		FileUtils.writeStringToFile(filePath.toFile(),wrongContent, StandardCharsets.UTF_8);
+		FileUtils.writeStringToFile(filePath.toFile(), wrongContent, StandardCharsets.UTF_8);
 	}
 
 	private void wrongContent(String id) throws IOException {
 		final Path filePath = repository.getPojoDB().getStoragePath().resolve("pojo").resolve(id + ".json");
 
 		final String wrongContent = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).";
-		FileUtils.writeStringToFile(filePath.toFile(),wrongContent, StandardCharsets.UTF_8);
+		FileUtils.writeStringToFile(filePath.toFile(), wrongContent, StandardCharsets.UTF_8);
 	}
 
 	@Test
 	public void findAll_loadNotExistingClass() throws IOException {
 		final Pojo pojo = create(1, "1");
 		repository.save(pojo);
-		
+
 		classNotExists(pojo.getId());
-		
+
 		Assertions.assertThat(repository.findAll()).isEmpty();
 	}
-
 
 	@Test
 	public void findAll_wrongContent() throws IOException {
@@ -95,15 +94,13 @@ public class DeserializeErrorsTest {
 		Assertions.assertThat(repository.findAll()).isEmpty();
 	}
 
-
-
 	@Test
 	public void findOne_loadNotExistingClass() throws IOException {
 		final Pojo pojo = create(1, "1");
 		repository.save(pojo);
 
 		classNotExists(pojo.getId());
-		
+
 		assertThat(repository.findOne(pojo.getId())).isNull();
 	}
 
@@ -117,7 +114,6 @@ public class DeserializeErrorsTest {
 		assertThat(repository.findOne(pojo.getId())).isNull();
 	}
 
-
 	@Test
 	public void findAllById_loadNotExistingClass() throws IOException {
 		final Pojo pojo = create(1, "1");
@@ -127,7 +123,6 @@ public class DeserializeErrorsTest {
 
 		Assertions.assertThat(repository.findAllById(Arrays.asList(pojo.getId()))).isEmpty();
 	}
-
 
 	@Test
 	public void findAllById_wrongContent() throws IOException {
@@ -148,7 +143,6 @@ public class DeserializeErrorsTest {
 
 		assertThat(repository.count()).isZero();
 	}
-
 
 	@Test
 	public void count_wrongContent() throws IOException {

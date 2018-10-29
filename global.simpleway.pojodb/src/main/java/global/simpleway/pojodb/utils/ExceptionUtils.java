@@ -108,8 +108,7 @@ public class ExceptionUtils {
 	}
 
 	/**
-	 * Perform one action on sequence of entities separately and throw only one exception if any exceptions occurred <b>Provide type for consumer! See
-	 * cz.sw.upis.util.ExceptionUtilsInvokeAllInstancesTest#normalExecution</b>
+	 * Perform one action on sequence of entities separately and throw only one exception if any exceptions occurred
 	 *
 	 * @param exceptionMessageSupplier
 	 *            log callback
@@ -152,8 +151,7 @@ public class ExceptionUtils {
 	}
 
 	/**
-	 * Perform sequence of entities separately and sequence of actions separately and throw only one exception if any exceptions occurred <b>Provide type for consumer! See
-	 * cz.sw.upis.util.ExceptionUtilsInvokeAllInstancesTest#normalExecution</b>
+	 * Perform sequence of entities separately and sequence of actions separately and throw only one exception if any exceptions occurred
 	 *
 	 * @param exceptionMessageSupplier
 	 *            log callback
