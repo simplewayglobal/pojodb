@@ -130,9 +130,7 @@ public class Repository<T, ID> {
 		return backend.findAllIds()
 				.stream()
 				.filter(ids::contains)
-				.map(id -> {
-					return this.findOne(id);
-				})
+				.map(this::findOne)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}

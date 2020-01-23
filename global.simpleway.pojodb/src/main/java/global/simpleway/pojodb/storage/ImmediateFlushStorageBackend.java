@@ -229,6 +229,7 @@ public class ImmediateFlushStorageBackend<ID> implements IStorageBackend<ID> {
 					return null;
 				})
 				.filter(Objects::nonNull)
+				.sorted()
 				.map(idCreator)
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
