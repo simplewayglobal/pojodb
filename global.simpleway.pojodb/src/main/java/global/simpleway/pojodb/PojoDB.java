@@ -301,7 +301,6 @@ public class PojoDB {
 		private Path storagePath = Paths.get(".");
 
 		private IFileFormatStrategy fileFormat = new JsonFileFormatStrategy();
-		private IFileFormatStrategy redoLogFormat = new JsonFileFormatStrategy();
 
 		private IIdGenerator<?, ?> idGenerator = new LongCounterIdGenerator<>();
 		private IIdGenerator<Object, String> redoLogIdGenerator = new LongCounterIdGenerator<>();
@@ -356,16 +355,19 @@ public class PojoDB {
 
 		public PojoDBBuilder withLongCounterIdGenerator() {
 			this.idGenerator = new LongCounterIdGenerator<>();
+			this.redoLogIdGenerator = new LongCounterIdGenerator<>();
 			return this;
 		}
 
 		public PojoDBBuilder withUuidIdGenerator() {
 			this.idGenerator = new UuidIdGenerator<>();
+			this.redoLogIdGenerator = new UuidIdGenerator<>();
 			return this;
 		}
 
 		public PojoDBBuilder withProvidedIdGenerator() {
 			this.idGenerator = new ProvidedIdGenerator<>();
+			this.redoLogIdGenerator = new ProvidedIdGenerator<>();
 			return this;
 		}
 
@@ -380,8 +382,7 @@ public class PojoDB {
 		}
 
 		public PojoDB build() {
-			final PojoDB pojoDB = new PojoDB(storagePath, fileFormat, redoLogFormat, idGenerator, redoLogIdGenerator, enableValidation);
-			return pojoDB;
+            return new PojoDB(storagePath, fileFormat, fileFormat, idGenerator, redoLogIdGenerator, enableValidation);
 		}
 
 	}
