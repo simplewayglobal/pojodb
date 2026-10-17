@@ -16,18 +16,23 @@
 
 package global.simpleway.pojodb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import org.junit.Test;
 
+import global.simpleway.pojodb.id.ProvidedIdGenerator;
 import global.simpleway.pojodb.listener.Jsr308ValidatorListener;
+import global.simpleway.pojodb.repository.DomainRepository;
 
 public class Jsr308ValidatorListenerTest {
 
@@ -91,6 +96,38 @@ public class Jsr308ValidatorListenerTest {
 		pojo.setName("     ");
 
 		listener.validate(pojo);
+	}
+
+	@Test
+	public void violationMessage() {
+		final AlwaysCheckValidationBeforeSave pojo = new AlwaysCheckValidationBeforeSave();
+
+		pojo.setId("1");
+		pojo.setEmail("www.simpleway.global");
+		pojo.setDate(ZonedDateTime.now().plusHours(1));
+		pojo.setName("Miroslav Hruz");
+
+		final ConstraintViolationException e = catchThrowableOfType(() -> listener.validate(pojo), ConstraintViolationException.class);
+
+		assertThat(e.getConstraintViolations()).hasSize(1);
+		assertThat(e.getMessage()).isEqualTo("\nProperty: [email] on class: [" + AlwaysCheckValidationBeforeSave.class + "]: "
+				+ e.getConstraintViolations().iterator().next().getMessage());
+	}
+
+	@Test
+	public void repositoryRefusesInvalidSave() {
+		final PojoDB pojoDB = PojoDB.builder().build();
+		final DomainRepository<AlwaysCheckValidationBeforeSave> repository = pojoDB.newDomainRepository(AlwaysCheckValidationBeforeSave.class,
+				new ProvidedIdGenerator<>(), new DummyBackend());
+
+		final AlwaysCheckValidationBeforeSave pojo = new AlwaysCheckValidationBeforeSave();
+		pojo.setId("1");
+		pojo.setName("     ");
+
+		final ConstraintViolationException e = catchThrowableOfType(() -> repository.save(pojo), ConstraintViolationException.class);
+
+		assertThat(e).isNotNull();
+		assertThat(e.getConstraintViolations()).extracting(v -> v.getPropertyPath().toString()).containsExactly("name");
 	}
 
 }
