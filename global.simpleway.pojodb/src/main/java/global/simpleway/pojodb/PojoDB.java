@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
@@ -73,10 +71,11 @@ import global.simpleway.pojodb.utils.LogUtil;
  * </ul>
  * <p>
  * Similar projects (mainly for inspiration) - MapDB and LevelDB
+ * <p>
+ * Thread safe.
  *
  * @author miroslavhruz
  */
-@ThreadSafe
 public class PojoDB {
 
 	private final Interner<Path> interner = Interners.newStrongInterner();
